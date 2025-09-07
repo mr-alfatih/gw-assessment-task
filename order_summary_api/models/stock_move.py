@@ -10,11 +10,11 @@ from odoo.addons.order_summary_api.controllers.api_controller import OrderSummar
 class StockMove(models.Model):
     _inherit = 'stock.move'
 
-    def _action_done(self, cancel_backorder=False):
+    def button_validate(self, cancel_backorder=False):
         # Identify moves that are about to be marked as 'done'
         moves_to_notify = self.filtered(lambda m: m.state not in ('done', 'cancel'))
 
-        res = super(StockMove, self)._action_done(cancel_backorder=cancel_backorder)
+        res = super(StockMove, self).button_validate(cancel_backorder=cancel_backorder)
 
         # Filter for moves that successfully completed and are relevant for our summary
         succeeded_moves = moves_to_notify.filtered(

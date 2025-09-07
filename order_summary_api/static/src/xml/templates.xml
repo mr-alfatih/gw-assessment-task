@@ -3,35 +3,74 @@
     <t t-name="order_summary_api.OrderSummaryPopup" owl="1">
         <div class="p-4">
             <h4 class="mb-3">Order Summary (Real-Time)</h4>
-            <div class="table-responsive">
-                <table class="table table-sm table-striped">
-                    <thead>
-                        <tr>
-                            <th>Product Template</th>
-                            <th>Variant (SKU)</th>
-                            <th class="text-end">Ordered Qty</th>
-                            <th class="text-end">Manufactured Qty</th>
-                            <th class="text-end">Delivered Qty</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <t t-if="!state.summaryLines.length">
+
+            <!-- Loading State -->
+            <t t-if="state.isLoading">
+                <div class="text-center py-4">
+                    <i class="fa fa-spinner fa-spin fa-2x text-primary"></i>
+                    <p class="mt-2 text-muted">Loading order summary data...</p>
+                </div>
+            </t>
+
+            <!-- Data Table -->
+            <t t-elif="state.summaryLines.length">
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped">
+                        <thead>
                             <tr>
-                                <td colspan="5" class="text-center fst-italic">Loading data or no data available...</td>
+                                <th>Product Template</th>
+                                <th>Variant (SKU)</th>
+                                <th class="text-end">Ordered Qty</th>
+                                <th class="text-end">Manufactured Qty</th>
+                                <th class="text-end">Delivered Qty</th>
+                                <th class="text-end">Status</th>
                             </tr>
-                        </t>
-                        <t t-foreach="state.summaryLines" t-as="line" t-key="line.product_id">
-                            <tr t-att-data-product-id="line.product_id" class="o_order_summary_line">
-                                <td><t t-esc="line.template_name"/></td>
-                                <td><t t-esc="line.default_code || ''"/></td>
-                                <td class="text-end"><t t-esc="line.ordered_quantity"/></td>
-                                <td class="text-end"><t t-esc="line.manufactured_quantity"/></td>
-                                <td class="text-end fw-bold"><t t-esc="line.delivered_quantity"/></td>
-                            </tr>
-                        </t>
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="state.summaryLines" t-as="line" t-key="line.product_id">
+                                <tr t-att-data-product-id="line.product_id" class="o_order_summary_line">
+                                    <td><t t-esc="line.template_name.name"/></td>
+                                    <td><t t-esc="line.default_code || ''"/></td>
+                                    <td class="text-end"><t t-esc="line.ordered_quantity"/></td>
+                                    <td class="text-end"><t t-esc="line.manufactured_quantity"/></td>
+                                    <td class="text-end fw-bold"><t t-esc="line.delivered_quantity"/></td>
+                                    <td class="text-end">
+                                        <t t-if="line.delivered_quantity >= line.ordered_quantity">
+                                            <span class="badge bg-success">Complete</span>
+                                        </t>
+                                        <t t-elif="line.delivered_quantity > 0">
+                                            <span class="badge bg-warning text-dark">Partial</span>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="badge bg-secondary">Pending</span>
+                                        </t>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-muted small mt-2">
+    <t t-esc="state.summaryLines.length"/>
+                    records
+                    <span t-if="state.lastUpdate">
+        • Last update: <t t-esc="state.lastUpdate.toLocaleTimeString()"/>
+    </span>
+                    <span t-if="!state.lastUpdate">• Loading...</span>
+</div>
+<!--                <div class="text-muted small mt-2">-->
+<!--                    <t t-esc="state.summaryLines.length"/>-->
+<!--                    records • Real-time updates active-->
+<!--                </div>-->
+            </t>
+
+            <!-- Empty State -->
+            <t t-else="">
+                <div class="text-center py-5">
+                    <i class="fa fa-inbox fa-3x text-muted mb-3"></i>
+                    <p class="text-muted fst-italic">No data available. Create some stock moves to see data here.</p>
+                </div>
+            </t>
         </div>
     </t>
 </templates>
