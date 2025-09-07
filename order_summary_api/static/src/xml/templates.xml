@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="order_summary_api.OrderSummaryPopup" owl="1">
+        <div class="p-4">
+            <h4 class="mb-3">Order Summary (Real-Time)</h4>
+            <div class="table-responsive">
+                <table class="table table-sm table-striped">
+                    <thead>
+                        <tr>
+                            <th>Product Template</th>
+                            <th>Variant (SKU)</th>
+                            <th class="text-end">Ordered Qty</th>
+                            <th class="text-end">Manufactured Qty</th>
+                            <th class="text-end">Delivered Qty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-if="!state.summaryLines.length">
+                            <tr>
+                                <td colspan="5" class="text-center fst-italic">Loading data or no data available...</td>
+                            </tr>
+                        </t>
+                        <t t-foreach="state.summaryLines" t-as="line" t-key="line.product_id">
+                            <tr t-att-data-product-id="line.product_id" class="o_order_summary_line">
+                                <td><t t-esc="line.template_name"/></td>
+                                <td><t t-esc="line.default_code || ''"/></td>
+                                <td class="text-end"><t t-esc="line.ordered_quantity"/></td>
+                                <td class="text-end"><t t-esc="line.manufactured_quantity"/></td>
+                                <td class="text-end fw-bold"><t t-esc="line.delivered_quantity"/></td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </t>
+</templates>
